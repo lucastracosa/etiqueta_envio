@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Etiqueta 62x100mm</title>
+
+<style>
+body {
+    font-family: Arial, sans-serif;
+    background: #f4f4f4;
+    display: flex;
+    justify-content: center;
+    padding: 30px;
+}
+
+/* FORMULARIO */
+.formulario {
+    width: 360px;
+    background: white;
+    padding: 20px;
+    border-radius: 6px;
+    box-shadow: 0 0 8px rgba(0,0,0,0.1);
+    margin-right: 20px;
+}
+
+.formulario h2 {
+    text-align: center;
+    margin-top: 0;
+}
+
+.formulario label {
+    display: block;
+    margin-bottom: 4px;
+    font-size: 13px;
+    font-weight: bold;
+}
+
+.formulario input, select {
+    width: 100%;
+    padding: 7px;
+    margin-bottom: 12px;
+    border: 1px solid #bbb;
+    border-radius: 4px;
+    font-size: 13px;
+}
+
+.formulario button {
+    width: 49%;
+    padding: 8px;
+    border: none;
+    background: black;
+    color: white;
+    font-size: 14px;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.formulario button:hover {
+    background: #333;
+}
+
+/* ETIQUETA */
+.etiqueta {
+    width: 392px;
+    height: 250px;
+    background: white;
+    border: 2px solid #000;
+    padding: 8px;
+    display: none;
+    position: relative;
+    box-sizing: border-box;
+}
+
+/* CABECERA ORDEN */
+.orden {
+    position: absolute;
+    right: 10px;
+    top: 5px;
+    font-weight: bold;
+    font-size: 14px;
+}
+
+/* LOGO */
+.logo {
+    width: 120px;
+    margin: 30px 0 5px 0;
+}
+
+/* TEXTO */
+.etiqueta p {
+    font-size: 12px;
+    margin: 1px 0;
+    margin-right: 3px;
+}
+
+/* PIE */
+.footer {
+    position: absolute;
+    bottom: 5px;
+    right: 5px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+/* CÓDIGO BARRAS */
+#barcode {
+    width: 130px;
+    height: 50px;
+}
+
+/* QR */
+.qr canvas {
+    width: 70px;
+    height: 70px;
+}
+
+/* IMPRESIÓN */
+@media print {
+    body * {
+        visibility: hidden;
+    }
+
+    .etiqueta, .etiqueta * {
+        visibility: visible;
+    }
+    .etiqueta {
+        position: absolute;
+        left: 0;
+        top: 0;
+        margin: 0;
+        padding: 0;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<div class="formulario">
+    <h2>Generar Etiqueta</h2>
+
+    <label>Seleccionar logo:</label>
+    <input id="logoInput" type="file" accept="image/*">
+
+    <label>Destinatario</label>
+    <input id="destInput" type="text">
+
+    <label>Teléfono Destinatario</label>
+    <input id="fonoInput" type="text">
+
+    <label>RUT Destinatario</label>
+    <input id="rutInput" type="text">
+
+    <label>Documento</label>
+    <select id="docInput">
+        <option value="Factura">Factura</option>
+        <option value="Boleta">Boleta</option>
+    </select>
+
+    <label>N° Documento</label>
+    <input id="docNumInput" type="text">
+
+    <label>Dirección</label>
+    <input id="dirInput" type="text">
+
+    <label>Ciudad</label>
+    <input id="ciudadInput" type="text">
+
+    <label>Código Postal</label>
+    <input id="postalInput" type="text">
+
+    <label>N° de Orden</label>
+    <input id="ordenInput" type="text">
+
+    <label>Producto / SKU</label>
+    <input id="prodInput" type="text">
+
+    <label>Bultos (Ej: 1/1):</label>
+    <input id="bultosInput" type="text">
+
+    <button onclick="generar()">Generar</button>
+    <button onclick="window.print()">Imprimir</button>
+</div>
+
+
+<div class="etiqueta" id="etiqueta">
+
+    <p><strong>Remitente:</strong> Lautaro 1740 – Concepción  
+    <br><strong>Teléfono:</strong> +56 9 4512 5364</p>
+
+    <div class="orden">
+        Orden Nº <span id="orden"></span>
+    </div>
+
+    <img class="logo" id="logo">
+
+    <p><strong>Destinatario:</strong> <span id="dest"></span></p>
+    <p><strong>Bultos:</strong> <span id="bultos"></span></p>
+    <p><strong>Teléfono:</strong> <span id="fono"></span></p>
+    <p><strong>RUT:</strong> <span id="rut"></span></p>
+    <p><strong>Dirección:</strong> <span id="dir"></span></p>
+    <p><strong>Ciudad:</strong> <span id="ciudad"></span></p>
+    <p><strong>Código Postal:</strong> <span id="postal"></span></p>
+    <p><strong>Producto:</strong> <span id="prod"></span></p>
+
+    <p><strong><span id="doc"></span> Nº <span id="docNum"></span></strong></p>
+
+    <div class="footer">
+        <svg id="barcode"></svg>
+        <div class="qr"><canvas id="qrCanvas"></canvas></div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/qrious@4.0.2/dist/qrious.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.5/dist/JsBarcode.all.min.js"></script>
+
+<script>
+
+function generar() {
+
+    // LOGO
+    const file = document.getElementById("logoInput").files[0];
+    const imgTag = document.getElementById("logo");
+    if (file) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            imgTag.src = e.target.result;
+        };
+        reader.readAsDataURL(file);
+    }
+
+    // CAMPOS
+    document.getElementById("dest").innerText = destInput.value;
+    document.getElementById("fono").innerText = fonoInput.value;
+    document.getElementById("rut").innerText = rutInput.value;
+    document.getElementById("doc").innerText = docInput.value;
+    document.getElementById("docNum").innerText = docNumInput.value;
+    document.getElementById("dir").innerText = dirInput.value;
+    document.getElementById("ciudad").innerText = ciudadInput.value;
+    document.getElementById("postal").innerText = postalInput.value;
+    document.getElementById("orden").innerText = ordenInput.value;
+    document.getElementById("prod").innerText = prodInput.value;
+    document.getElementById("bultos").innerText = bultosInput.value;
+
+    // QR
+    new QRious({
+        element: document.getElementById("qrCanvas"),
+        size: 70,
+        value: "Orden: " + ordenInput.value +
+               " | Dest: " + destInput.value +
+               " | Doc: " + docInput.value + " Nº " + docNumInput.value +
+               " | Bultos: " + bultosInput.value
+    });
+
+    // BARCODE
+    JsBarcode("#barcode", ordenInput.value, {
+        format: "code128",
+        lineColor: "#000",
+        width: 1.4,
+        height: 40,
+        displayValue: false
+    });
+
+    document.getElementById("etiqueta").style.display = "block";
+}
+
+</script>
+
+</body>
+</html>
