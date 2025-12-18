@@ -2,7 +2,7 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8">
-<title>Etiqueta 62x100mm</title>
+<title>Etiqueta A5</title>
 
 <style>
 body {
@@ -59,64 +59,70 @@ body {
     background: #333;
 }
 
-/* ETIQUETA */
+/* ETIQUETA A5 */
 .etiqueta {
-    width: 392px;
-    height: 250px;
+    width: 559px;   /* equivalente A5 horizontal */
+    height: 350px;
     background: white;
     border: 2px solid #000;
-    padding: 8px;
+    padding: 18px;
     display: none;
     position: relative;
     box-sizing: border-box;
+    margin: 0 auto;
 }
 
 /* CABECERA ORDEN */
 .orden {
     position: absolute;
-    right: 10px;
-    top: 5px;
+    right: 20px;
+    top: 15px;
     font-weight: bold;
-    font-size: 14px;
+    font-size: 18px;
 }
 
 /* LOGO */
 .logo {
-    width: 120px;
-    margin: 30px 0 5px 0;
+    width: 150px;
+    margin: 45px 0 10px 0;
 }
 
 /* TEXTO */
 .etiqueta p {
-    font-size: 12px;
-    margin: 1px 0;
-    margin-right: 3px;
+    font-size: 14px;
+    margin: 2px 0;
 }
 
 /* PIE */
 .footer {
     position: absolute;
-    bottom: 5px;
-    right: 5px;
+    bottom: 10px;
+    right: 10px;
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: 20px;
 }
 
-/* CÓDIGO BARRAS */
+/* BARRAS */
 #barcode {
-    width: 130px;
-    height: 50px;
+    width: 150px;
+    height: 55px;
 }
 
 /* QR */
 .qr canvas {
-    width: 70px;
-    height: 70px;
+    width: 90px;
+    height: 90px;
 }
 
 /* IMPRESIÓN */
 @media print {
+
+    @page {
+        size: A5 portrait; 
+        margin: 0;
+    }
+
     body * {
         visibility: hidden;
     }
@@ -124,12 +130,13 @@ body {
     .etiqueta, .etiqueta * {
         visibility: visible;
     }
+
     .etiqueta {
         position: absolute;
         left: 0;
         top: 0;
         margin: 0;
-        padding: 0;
+        padding: 18px;
     }
 }
 </style>
@@ -219,9 +226,10 @@ body {
 
 function generar() {
 
-    // LOGO
+    // LOGO LOCAL
     const file = document.getElementById("logoInput").files[0];
     const imgTag = document.getElementById("logo");
+
     if (file) {
         const reader = new FileReader();
         reader.onload = function(e) {
@@ -246,7 +254,7 @@ function generar() {
     // QR
     new QRious({
         element: document.getElementById("qrCanvas"),
-        size: 70,
+        size: 90,
         value: "Orden: " + ordenInput.value +
                " | Dest: " + destInput.value +
                " | Doc: " + docInput.value + " Nº " + docNumInput.value +
@@ -257,8 +265,8 @@ function generar() {
     JsBarcode("#barcode", ordenInput.value, {
         format: "code128",
         lineColor: "#000",
-        width: 1.4,
-        height: 40,
+        width: 1.8,
+        height: 55,
         displayValue: false
     });
 
