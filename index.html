@@ -81,7 +81,7 @@ body {
     font-size: 18px;
 }
 
-/* LOGO */
+/* LOGO FIJO */
 .logo {
     width: 150px;
     margin: 45px 0 10px 0;
@@ -93,7 +93,7 @@ body {
     margin: 2px 0;
 }
 
-/* FOOTER NUEVO */
+/* FOOTER */
 .footer {
     position: absolute;
     bottom: 20px;
@@ -104,39 +104,28 @@ body {
     align-items: flex-end;
 }
 
-/* IZQUIERDA - BARCODE */
-.footerLeft {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-}
+/* BARCODE */
 #barcode {
     width: 150px;
     height: 55px;
     padding-left: 200px;
 }
 
-/* DERECHA - INFO + QR */
+/* DERECHA */
 .footerRight {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-end;
     text-align: right;
 }
 
-/* TRASNPORTADORA */
 .transportadoraTxt {
     font-size: 16px;
     font-weight: bold;
-    margin-bottom: 5px;
 }
 
-/* FRAGIL */
 .fragil {
     font-size: 30px;
     font-weight: bold;
-    margin-bottom: 10px;
     color: rgb(175, 18, 18);
+    margin: 5px 0;
 }
 
 /* QR */
@@ -147,26 +136,21 @@ body {
 
 /* IMPRESIÓN */
 @media print {
-
     @page {
-        size: A5 portrait; 
+        size: A5 portrait;
         margin: 0;
     }
-
     body * {
         visibility: hidden;
     }
-
     .etiqueta, .etiqueta * {
         visibility: visible;
     }
-
     .etiqueta {
         position: absolute;
         left: 0;
         top: 0;
         margin: 0;
-        padding: 18px;
     }
 }
 </style>
@@ -175,10 +159,7 @@ body {
 <body>
 
 <div class="formulario">
-    <h2>Generar Etiqueta ENVIO</h2>
-
-    <label>Seleccionar logo:</label>
-    <input id="logoInput" type="file" accept="image/*">
+    <h2>Generar Etiqueta ENVÍO</h2>
 
     <label>Transportadora:</label>
     <select id="transportadoraInput">
@@ -190,64 +171,62 @@ body {
         <option>Villa Prat</option>
         <option>Bluexpress</option>
         <option>24 Volts</option>
-        <option>Mercado Envios</option>
+        <option>Mercado Envíos</option>
         <option>Pullman Cargo</option>
         <option>MagaBus</option>
         <option>Norah</option>
     </select>
 
     <label>Destinatario</label>
-    <input id="destInput" type="text">
+    <input id="destInput">
 
-    <label>Teléfono Destinatario</label>
-    <input id="fonoInput" type="text">
+    <label>Teléfono</label>
+    <input id="fonoInput">
 
-    <label>RUT Destinatario</label>
-    <input id="rutInput" type="text">
+    <label>RUT</label>
+    <input id="rutInput">
 
     <label>Documento</label>
     <select id="docInput">
-        <option value="Factura">Factura</option>
-        <option value="Boleta">Boleta</option>
+        <option>Factura</option>
+        <option>Boleta</option>
     </select>
 
     <label>N° Documento</label>
-    <input id="docNumInput" type="text">
+    <input id="docNumInput">
 
     <label>Dirección</label>
-    <input id="dirInput" type="text">
+    <input id="dirInput">
 
     <label>Ciudad</label>
-    <input id="ciudadInput" type="text">
+    <input id="ciudadInput">
 
     <label>Código Postal</label>
-    <input id="postalInput" type="text">
+    <input id="postalInput">
 
-    <label>N° de Orden</label>
-    <input id="ordenInput" type="text">
+    <label>N° Orden</label>
+    <input id="ordenInput">
 
-    <label>Producto / SKU</label>
-    <input id="prodInput" type="text">
+    <label>Producto</label>
+    <input id="prodInput">
 
-    <label>Bultos (Ej: 1/1):</label>
-    <input id="bultosInput" type="text">
+    <label>Bultos</label>
+    <input id="bultosInput">
 
     <button onclick="generar()">Generar</button>
     <button onclick="window.print()">Imprimir</button>
 </div>
 
-
 <div class="etiqueta" id="etiqueta">
 
-    <p><strong>Remitente:</strong> Lautaro 1740 – Concepción  
-    <br><strong>Teléfono:</strong> +56 9 4512 5364
-    <br><strong>wwww.24volts.cl</strong></p>
+    <p><strong>Remitente:</strong> Lautaro 1740 – Concepción<br>
+    <strong>Tel:</strong> +56 9 4512 5364<br>
+    <strong>www.24volts.cl</strong></p>
 
-    <div class="orden">
-        Orden Nº <span id="orden"></span>
-    </div>
+    <div class="orden">Orden Nº <span id="orden"></span></div>
 
-    <img class="logo" id="logo">
+    <!-- LOGO FIJO -->
+    <img class="logo" src="logo.png" alt="24Volts">
 
     <p><strong>Destinatario:</strong> <span id="dest"></span></p>
     <p><strong>Bultos:</strong> <span id="bultos"></span></p>
@@ -255,16 +234,12 @@ body {
     <p><strong>RUT:</strong> <span id="rut"></span></p>
     <p><strong>Dirección:</strong> <span id="dir"></span></p>
     <p><strong>Ciudad:</strong> <span id="ciudad"></span></p>
-    <p><strong>Código Postal:</strong> <span id="postal"></span></p>
+    <p><strong>CP:</strong> <span id="postal"></span></p>
     <p><strong>Producto:</strong> <span id="prod"></span></p>
-
     <p><strong><span id="doc"></span> Nº <span id="docNum"></span></strong></p>
 
     <div class="footer">
-
-        <div class="footerLeft">
-            <svg id="barcode"></svg>
-        </div>
+        <svg id="barcode"></svg>
 
         <div class="footerRight">
             <div class="transportadoraTxt">
@@ -273,7 +248,6 @@ body {
             <div class="fragil">FRÁGIL</div>
             <div class="qr"><canvas id="qrCanvas"></canvas></div>
         </div>
-
     </div>
 </div>
 
@@ -281,58 +255,41 @@ body {
 <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.5/dist/JsBarcode.all.min.js"></script>
 
 <script>
-
 function generar() {
 
-    // LOGO LOCAL
-    const file = document.getElementById("logoInput").files[0];
-    const imgTag = document.getElementById("logo");
+    transportadora.innerText = transportadoraInput.value;
+    dest.innerText = destInput.value;
+    fono.innerText = fonoInput.value;
+    rut.innerText = rutInput.value;
+    doc.innerText = docInput.value;
+    docNum.innerText = docNumInput.value;
+    dir.innerText = dirInput.value;
+    ciudad.innerText = ciudadInput.value;
+    postal.innerText = postalInput.value;
+    orden.innerText = ordenInput.value;
+    prod.innerText = prodInput.value;
+    bultos.innerText = bultosInput.value;
 
-    if (file) {
-        const reader = new FileReader();
-        reader.onload = function(e) {
-            imgTag.src = e.target.result;
-        };
-        reader.readAsDataURL(file);
-    }
-
-    // CAMPOS
-    document.getElementById("transportadora").innerText = transportadoraInput.value;
-    document.getElementById("dest").innerText = destInput.value;
-    document.getElementById("fono").innerText = fonoInput.value;
-    document.getElementById("rut").innerText = rutInput.value;
-    document.getElementById("doc").innerText = docInput.value;
-    document.getElementById("docNum").innerText = docNumInput.value;
-    document.getElementById("dir").innerText = dirInput.value;
-    document.getElementById("ciudad").innerText = ciudadInput.value;
-    document.getElementById("postal").innerText = postalInput.value;
-    document.getElementById("orden").innerText = ordenInput.value;
-    document.getElementById("prod").innerText = prodInput.value;
-    document.getElementById("bultos").innerText = bultosInput.value;
-
-    // QR
     new QRious({
-        element: document.getElementById("qrCanvas"),
+        element: qrCanvas,
         size: 90,
-        value: "Orden: " + ordenInput.value +
-               " | Dest: " + destInput.value +
-               " | Doc: " + docInput.value + " Nº " + docNumInput.value +
-               " | Bultos: " + bultosInput.value +
-               " | Transportadora: " + transportadoraInput.value
+        value:
+            "Orden: " + ordenInput.value +
+            " | Dest: " + destInput.value +
+            " | Doc: " + docInput.value + " " + docNumInput.value +
+            " | Bultos: " + bultosInput.value +
+            " | Transportadora: " + transportadoraInput.value
     });
 
-    // BARCODE
     JsBarcode("#barcode", ordenInput.value, {
-        format: "code128",
-        lineColor: "#000",
+        format: "CODE128",
         width: 1.8,
         height: 55,
         displayValue: false
     });
 
-    document.getElementById("etiqueta").style.display = "block";
+    etiqueta.style.display = "block";
 }
-
 </script>
 
 </body>
