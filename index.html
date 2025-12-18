@@ -61,7 +61,7 @@ body {
 
 /* ETIQUETA A5 */
 .etiqueta {
-    width: 559px;   /* equivalente A5 horizontal */
+    width: 559px;
     height: 350px;
     background: white;
     border: 2px solid #000;
@@ -93,20 +93,50 @@ body {
     margin: 2px 0;
 }
 
-/* PIE */
+/* FOOTER NUEVO */
 .footer {
     position: absolute;
-    bottom: 10px;
-    right: 10px;
+    bottom: 20px;
+    left: 18px;
+    right: 18px;
     display: flex;
-    align-items: center;
-    gap: 20px;
+    justify-content: space-between;
+    align-items: flex-end;
 }
 
-/* BARRAS */
+/* IZQUIERDA - BARCODE */
+.footerLeft {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
 #barcode {
     width: 150px;
     height: 55px;
+    padding-left: 200px;
+}
+
+/* DERECHA - INFO + QR */
+.footerRight {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    text-align: right;
+}
+
+/* TRASNPORTADORA */
+.transportadoraTxt {
+    font-size: 16px;
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+
+/* FRAGIL */
+.fragil {
+    font-size: 30px;
+    font-weight: bold;
+    margin-bottom: 10px;
+    color: rgb(175, 18, 18);
 }
 
 /* QR */
@@ -149,6 +179,22 @@ body {
 
     <label>Seleccionar logo:</label>
     <input id="logoInput" type="file" accept="image/*">
+
+    <label>Transportadora:</label>
+    <select id="transportadoraInput">
+        <option>Chevalier</option>
+        <option>Chilexpress</option>
+        <option>Starken</option>
+        <option>TVP</option>
+        <option>Mena</option>
+        <option>Villa Prat</option>
+        <option>Bluexpress</option>
+        <option>24 Volts</option>
+        <option>Mercado Envios</option>
+        <option>Pullman Cargo</option>
+        <option>MagaBus</option>
+        <option>Norah</option>
+    </select>
 
     <label>Destinatario</label>
     <input id="destInput" type="text">
@@ -194,7 +240,8 @@ body {
 <div class="etiqueta" id="etiqueta">
 
     <p><strong>Remitente:</strong> Lautaro 1740 – Concepción  
-    <br><strong>Teléfono:</strong> +56 9 4512 5364</p>
+    <br><strong>Teléfono:</strong> +56 9 4512 5364
+    <br><strong>wwww.24volts.cl</strong></p>
 
     <div class="orden">
         Orden Nº <span id="orden"></span>
@@ -214,8 +261,19 @@ body {
     <p><strong><span id="doc"></span> Nº <span id="docNum"></span></strong></p>
 
     <div class="footer">
-        <svg id="barcode"></svg>
-        <div class="qr"><canvas id="qrCanvas"></canvas></div>
+
+        <div class="footerLeft">
+            <svg id="barcode"></svg>
+        </div>
+
+        <div class="footerRight">
+            <div class="transportadoraTxt">
+                Transportadora: <span id="transportadora"></span>
+            </div>
+            <div class="fragil">FRÁGIL</div>
+            <div class="qr"><canvas id="qrCanvas"></canvas></div>
+        </div>
+
     </div>
 </div>
 
@@ -239,6 +297,7 @@ function generar() {
     }
 
     // CAMPOS
+    document.getElementById("transportadora").innerText = transportadoraInput.value;
     document.getElementById("dest").innerText = destInput.value;
     document.getElementById("fono").innerText = fonoInput.value;
     document.getElementById("rut").innerText = rutInput.value;
@@ -258,7 +317,8 @@ function generar() {
         value: "Orden: " + ordenInput.value +
                " | Dest: " + destInput.value +
                " | Doc: " + docInput.value + " Nº " + docNumInput.value +
-               " | Bultos: " + bultosInput.value
+               " | Bultos: " + bultosInput.value +
+               " | Transportadora: " + transportadoraInput.value
     });
 
     // BARCODE
