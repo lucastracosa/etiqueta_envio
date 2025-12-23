@@ -255,71 +255,33 @@ body {
 <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.5/dist/JsBarcode.all.min.js"></script>
 
 <script>
-async function generar() {
+function generar() {
 
-    const data = {
-        transportadora: transportadoraInput.value,
-        destinatario: destInput.value,
-        telefono: fonoInput.value,
-        rut: rutInput.value,
-        documento: docInput.value,
-        numeroDocumento: docNumInput.value,
-        direccion: dirInput.value,
-        ciudad: ciudadInput.value,
-        codigoPostal: postalInput.value,
-        orden: ordenInput.value,
-        producto: prodInput.value,
-        bultos: bultosInput.value
-    };
+    transportadora.innerText = transportadoraInput.value;
+    dest.innerText = destInput.value;
+    fono.innerText = fonoInput.value;
+    rut.innerText = rutInput.value;
+    doc.innerText = docInput.value;
+    docNum.innerText = docNumInput.value;
+    dir.innerText = dirInput.value;
+    ciudad.innerText = ciudadInput.value;
+    postal.innerText = postalInput.value;
+    orden.innerText = ordenInput.value;
+    prod.innerText = prodInput.value;
+    bultos.innerText = bultosInput.value;
 
-    // 🔹 ENVÍO AL BACKEND
-    try {
-        const response = await fetch("https://etiquetas-back.onrender.com/etiqueta", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify(data)
-        });
-
-        if (!response.ok) {
-            throw new Error("Error al enviar datos al backend");
-        }
-
-    } catch (error) {
-        alert("No se pudo conectar con el backend");
-        console.error(error);
-        return;
-    }
-
-    // 🔹 RELLENA ETIQUETA VISUAL (COMO ANTES)
-    transportadora.innerText = data.transportadora;
-    dest.innerText = data.destinatario;
-    fono.innerText = data.telefono;
-    rut.innerText = data.rut;
-    doc.innerText = data.documento;
-    docNum.innerText = data.numeroDocumento;
-    dir.innerText = data.direccion;
-    ciudad.innerText = data.ciudad;
-    postal.innerText = data.codigoPostal;
-    orden.innerText = data.orden;
-    prod.innerText = data.producto;
-    bultos.innerText = data.bultos;
-
-    // 🔹 QR
     new QRious({
         element: qrCanvas,
         size: 90,
         value:
-            "Orden: " + data.orden +
-            " | Dest: " + data.destinatario +
-            " | Doc: " + data.documento + " " + data.numeroDocumento +
-            " | Bultos: " + data.bultos +
-            " | Transportadora: " + data.transportadora
+            "Orden: " + ordenInput.value +
+            " | Dest: " + destInput.value +
+            " | Doc: " + docInput.value + " " + docNumInput.value +
+            " | Bultos: " + bultosInput.value +
+            " | Transportadora: " + transportadoraInput.value
     });
 
-    // 🔹 BARCODE
-    JsBarcode("#barcode", data.orden, {
+    JsBarcode("#barcode", ordenInput.value, {
         format: "CODE128",
         width: 1.8,
         height: 55,
