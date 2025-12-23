@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Etiqueta A5</title>
+
+<style>
+body {
+    font-family: Arial, sans-serif;
+    background: #f4f4f4;
+    display: flex;
+    justify-content: center;
+    padding: 30px;
+}
+
+.formulario {
+    width: 420px;
+    background: white;
+    padding: 20px;
+    border-radius: 6px;
+    box-shadow: 0 0 8px rgba(0,0,0,0.1);
+    margin-right: 20px;
+}
+
+.formulario h2 {
+    text-align: center;
+}
+
+label {
+    font-size: 13px;
+    font-weight: bold;
+}
+
+input, select {
+    width: 97%;
+    padding: 7px;
+    margin-bottom: 8px;
+    font-size: 13px;
+}
+
+button {
+    padding: 7px;
+    background: black;
+    color: white;
+    border: none;
+    cursor: pointer;
+    font-size: 13px;
+}
+
+button:hover {
+    background: #333;
+}
+
+.topo {
+    width: 97%;
+    background: #eee;
+    padding: 10px;
+    border-radius: 4px;
+    margin-bottom: 10px;
+}
+
+.botoesTopo {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 6px;
+    margin-top: 8px;
+}
+
+hr {
+    margin: 12px 0;
+}
+
+/* ETIQUETA */
+.etiqueta {
+    width: 559px;
+    height: 350px;
+    background: white;
+    border: 2px solid black;
+    padding: 18px;
+    display: none;
+    position: relative;
+}
+
+.orden {
+    position: absolute;
+    right: 20px;
+    top: 15px;
+    font-size: 18px;
+    font-weight: bold;
+}
+
+.logo {
+    width: 150px;
+    margin: 45px 0 10px;
+}
+
+.etiqueta p {
+    font-size: 14px;
+    margin: 2px 0;
+}
+
+.footer {
+    position: absolute;
+    bottom: 20px;
+    left: 18px;
+    right: 18px;
+    display: flex;
+    justify-content: space-between;
+}
+
+#barcode {
+    height: 55px;
+    padding-left: 200px;
+}
+
+.transportadoraTxt {
+    font-size: 16px;
+    font-weight: bold;
+}
+
+.fragil {
+    font-size: 30px;
+    font-weight: bold;
+    color: darkred;
+}
+
+.qr canvas {
+    width: 90px;
+    height: 90px;
+}
+
+#historial {
+    max-height: 240px;
+    overflow: auto;
+    font-size: 12px;
+}
+
+@media print {
+    body * { visibility: hidden; }
+    .etiqueta, .etiqueta * { visibility: visible; }
+    .etiqueta { position:absolute; left:0; top:0; }
+}
+</style>
+</head>
+
+<body>
+
+<div class="formulario">
+<h2>Etiqueta de Envío</h2>
+
+<!-- 🔍 BUSCADOR -->
+<div class="topo">
+    <label>Buscar cliente por RUT</label>
+    <input id="buscarRut" placeholder="12.345.678-9">
+
+    <div class="botoesTopo">
+        <button onclick="buscarCliente()">Buscar</button>
+        <button onclick="guardarCliente()">Guardar Cliente</button>
+        <button onclick="exportarClientes()">Exportar Clientes</button>
+        <button onclick="verHistorial()">Ver Historial</button>
+    </div>
+</div>
+
+<label>Transportadora</label>
+<select id="transportadoraInput">
+    <option>Chilexpress</option>
+    <option>Starken</option>
+    <option>Bluexpress</option>
+    <option>24 Volts</option>
+</select>
+
+<label>Destinatario</label>
+<input id="destInput">
+
+<label>Teléfono</label>
+<input id="fonoInput">
+
+<label>RUT</label>
+<input id="rutInput">
+
+<label>Dirección</label>
+<input id="dirInput">
+
+<label>Ciudad</label>
+<input id="ciudadInput">
+
+<label>Código Postal</label>
+<input id="postalInput">
+
+<label>N° Orden</label>
+<input id="ordenInput">
+
+<label>Producto</label>
+<input id="prodInput">
+
+<label>Bultos</label>
+<input id="bultosInput">
+
+<button style="width:48%" onclick="generar()">Generar</button>
+<button style="width:48%" onclick="window.print()">Imprimir</button>
+
+<hr>
+
+<label>Importar clientes desde Excel</label>
+<input type="file" accept=".xlsx" onchange="importarExcel(this)">
+
+<div id="historial"></div>
+</div>
+
+<!-- ETIQUETA -->
+<div class="etiqueta" id="etiqueta">
+<p><strong>Remitente:</strong> Lautaro 1740 – Concepción</p>
+<div class="orden">Orden Nº <span id="orden"></span></div>
+
+<img class="logo" src="logo.png">
+
+<p><strong>Destinatario:</strong> <span id="dest"></span></p>
+<p><strong>Bultos:</strong> <span id="bultos"></span></p>
+<p><strong>Teléfono:</strong> <span id="fono"></span></p>
+<p><strong>RUT:</strong> <span id="rut"></span></p>
+<p><strong>Dirección:</strong> <span id="dir"></span></p>
+<p><strong>Ciudad:</strong> <span id="ciudad"></span></p>
+<p><strong>CP:</strong> <span id="postal"></span></p>
+<p><strong>Producto:</strong> <span id="prod"></span></p>
+
+<div class="footer">
+<svg id="barcode"></svg>
+<div>
+<div class="transportadoraTxt">Transportadora: <span id="transportadora"></span></div>
+<div class="fragil">FRÁGIL</div>
+<div class="qr"><canvas id="qrCanvas"></canvas></div>
+</div>
+</div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/qrious@4.0.2/dist/qrious.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.5/dist/JsBarcode.all.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<script>
+const API_URL = "https://etiquetas-back.onrender.com";
+const SUPABASE_URL = "https://TU_PROYECTO.supabase.co";
+const SUPABASE_KEY = "TU_ANON_PUBLIC_KEY";
+const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+async function buscarCliente() {
+    const { data } = await supabase
+        .from("clientes")
+        .select("*")
+        .eq("rut", buscarRut.value)
+        .single();
+
+    if (data) {
+        rutInput.value = data.rut;
+        destInput.value = data.destinatario;
+        fonoInput.value = data.telefono;
+        dirInput.value = data.direccion;
+        ciudadInput.value = data.ciudad;
+        postalInput.value = data.postal;
+    }
+}
+
+async function guardarCliente() {
+    await supabase.from("clientes").upsert({
+        rut: rutInput.value,
+        destinatario: destInput.value,
+        telefono: fonoInput.value,
+        direccion: dirInput.value,
+        ciudad: ciudadInput.value,
+        postal: postalInput.value
+    });
+    alert("Cliente guardado");
+}
+
+async function generar() {
+    transportadora.innerText = transportadoraInput.value;
+    dest.innerText = destInput.value;
+    fono.innerText = fonoInput.value;
+    rut.innerText = rutInput.value;
+    dir.innerText = dirInput.value;
+    ciudad.innerText = ciudadInput.value;
+    postal.innerText = postalInput.value;
+    orden.innerText = ordenInput.value;
+    prod.innerText = prodInput.value;
+    bultos.innerText = bultosInput.value;
+
+    new QRious({ element: qrCanvas, value: ordenInput.value, size: 90 });
+    JsBarcode("#barcode", ordenInput.value, { height:55, displayValue:false });
+
+    await supabase.from("envios").insert({
+        orden: ordenInput.value,
+        rut: rutInput.value,
+        destinatario: destInput.value,
+        transportadora: transportadoraInput.value,
+        producto: prodInput.value,
+        bultos: bultosInput.value
+    });
+
+    etiqueta.style.display = "block";
+}
+
+async function verHistorial() {
+    const { data } = await supabase
+        .from("envios")
+        .select("*")
+        .order("fecha", { ascending:false });
+
+    let html = "<table border='1' width='100%'>";
+    data.forEach(e => {
+        html += `<tr><td>${e.fecha}</td><td>${e.orden}</td><td>${e.destinatario}</td></tr>`;
+    });
+    historial.innerHTML = html + "</table>";
+}
+
+function exportarClientes() {
+    alert("Exportación directa desde Supabase recomendada (CSV/XLSX)");
+}
+</script>
+
+</body>
+</html>
